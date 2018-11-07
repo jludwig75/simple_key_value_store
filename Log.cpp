@@ -7,6 +7,7 @@
 #include "Log.h"
 #include "BlockAllocator.h"
 #include "BlockArray.h"
+#include "kv_block.h"
 
 #include "kv_store.h"
 
@@ -14,61 +15,6 @@
 #include <string.h>
 #include <errno.h>
 
-
-const uint64_t kv_block_signature = 0xB1423CB4C5BCBC4ALL;
-
-
-struct kv_block_header
-{
-	uint64_t signature;
-	uint64_t key_id;
-	uint64_t sequence;
-	uint16_t data_bytes;
-
-	kv_block_header() :
-		signature(0), key_id(0), sequence(0), data_bytes(0)
-	{
-	}
-	kv_block_header(uint64_t key_id, uint32_t data_bytes, uint64_t sequence) :
-		signature(kv_block_signature), key_id(key_id), sequence(sequence), data_bytes(data_bytes)
-	{
-	}
-	bool is_allocated() const
-	{
-		return data_bytes > 0;
-	}
-	bool validate() const
-	{
-		return signature == kv_block_signature;
-	}
-};
-
-struct kv_block
-{
-	kv_block_header header;
-	char data[MAXBLOB];
-
-	kv_block()
-	{
-
-	}
-	kv_block(uint64_t key_id, uint32_t data_bytes, const char *value_data, uint64_t sequence) : header(key_id, data_bytes, sequence)
-	{
-		assert(data_bytes <= MAXBLOB);
-		if (value_data)
-		{
-			memcpy(data, value_data, data_bytes);
-		}
-	}
-	bool is_allocated() const
-	{
-		return header.is_allocated();
-	}
-	bool validate() const
-	{
-		return header.validate();
-	}
-};
 
 template<typename _T>
 class DeleteOnExit
@@ -93,11 +39,12 @@ Log::Log(BlockArray *block_array) :
 	_current_append_point(0),
 	_current_sequence_number(0)
 {
-	_block_allocator = new BlockAllocator(MAXBLOB);
+	_block_allocator = new BlockAllocator(MAXKEYS);
 }
 
 Log::~Log()
 {
+	delete _block_allocator;
 }
 
 size_t Log::get_raw_block_size()
@@ -115,6 +62,11 @@ int Log::read_block(uint32_t block, char *data, size_t bytes_to_read)
 	kv_block *block_data = new kv_block;
 	DeleteOnExit<kv_block> on_exit(block_data);
 
+	if (bytes_to_read > sizeof(block_data->data))
+	{
+		return -EINVAL;
+	}
+
 	int ret = _block_array->read_block(block, (uint8_t *)block_data);
 	if (ret != 0)
 	{
@@ -125,6 +77,8 @@ int Log::read_block(uint32_t block, char *data, size_t bytes_to_read)
 	{
 		return -EFAULT;
 	}
+
+	memcpy(data, block_data, bytes_to_read);
 
 	return 0;
 }

@@ -24,6 +24,10 @@ BlockArray::BlockArray(size_t raw_block_bytes) :
 
 BlockArray::~BlockArray()
 {
+	if (_fd != -1)
+	{
+		close(_fd);
+	}
 }
 
 int BlockArray::open(const char *file_name, bool create)
