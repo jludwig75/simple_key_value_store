@@ -28,7 +28,7 @@ uint32_t BlockAllocator::find_next_free_block(uint32_t starting_block)
 	assert(starting_block < _number_of_blocks);
 	if (starting_block >= _number_of_blocks)
 	{
-		return -EINVAL;
+		return UINT32_MAX;
 	}
 
 	for (uint32_t b = starting_block; b < _number_of_blocks; b++)
@@ -67,7 +67,7 @@ void BlockAllocator::mark_block_as_allocated(uint32_t block)
 
 bool BlockAllocator::is_set(uint32_t block) const
 {
-	return (1 << block_to_bit(block)) & _bits[block_to_byte(block)] != 0;
+	return ((1 << block_to_bit(block)) & _bits[block_to_byte(block)]) != 0;
 }
 
 void BlockAllocator::set(uint32_t block) const

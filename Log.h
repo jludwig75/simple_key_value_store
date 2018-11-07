@@ -16,7 +16,7 @@ class BlockAllocator;
 
 class Log {
 public:
-	Log(BlockArray *block_array, BlockAllocator *block_allocator);
+	Log(BlockArray *block_array);
 	virtual ~Log();
 
 	static size_t get_raw_block_size();
@@ -25,7 +25,8 @@ public:
 
 	int read_block(uint32_t block, char *block_data, size_t bytes_to_read);
 	int write_block(uint64_t key, const char *block_data, size_t size, uint32_t *block_written);
-	int release_key(uint64_t key);
+	void invalidate_block(uint32_t block);
+	int mark_key_as_erased(uint64_t key);
 
 private:
 	uint32_t advance_append_point();

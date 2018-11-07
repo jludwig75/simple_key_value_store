@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	int ret = store.format();
 	if (ret != 0)
 	{
-		printf("Error %d formatting key value store \"%s\"\n", ret);
+		printf("Error %d formatting key value store \"%s\"\n", ret, argv[1]);
 		return ret;
 	}
 

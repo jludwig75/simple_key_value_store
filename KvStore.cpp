@@ -9,7 +9,6 @@
 
 #include "Directory.h"
 #include "Log.h"
-#include "BlockAllocator.h"
 #include "BlockArray.h"
 
 #include "kv_store.h"
@@ -20,15 +19,13 @@
 KvStore::KvStore(const char *file_name, bool create) :
 	_block_array(NULL),
 	_directory(NULL),
-	_block_allocator(NULL),
 	_log(NULL),
 	_kv_store_file_name(NULL),
 	_create(create)
 {
 	_block_array = new BlockArray(Log::get_raw_block_size());
 	_directory = new Directory(MAXKEYS);
-	_block_allocator = new BlockAllocator(MAXBLOB);
-	_log = new Log(_block_array, _block_allocator);
+	_log = new Log(_block_array);
 	_kv_store_file_name = new char[strlen(file_name) + 1];
 	strcpy(_kv_store_file_name, file_name);
 }
@@ -37,7 +34,6 @@ KvStore::~KvStore()
 {
 	delete _block_array;
 	delete _directory;
-	delete _block_allocator;
 	delete _log;
 	delete _kv_store_file_name;
 }
@@ -84,15 +80,14 @@ int KvStore::get(uint64_t key, char **data, size_t *data_size) const
 
 int KvStore::set(uint64_t key, const char *data, size_t size)
 {
-	// lookup the key
-	uint32_t block;
+	// lookup the key in case it is already stored.
+	uint32_t old_block;
 	size_t bytes;
-	int ret = _directory->lookup_key(key, &block, &bytes);
-	if (ret == 0)
-	{
-		// Release the key. Maybe save off the block to free it later.
-		_block_allocator->free_block(block);
-	}
+	bool invalidate_old_block = false;
+	int ret = _directory->lookup_key(key, &old_block, &bytes);
+	// If the key was already stored, we will need to invalidate
+	// the old block after we replace it.
+	bool invalidate_old_block = (ret == 0);
 
 	uint32_t new_block;
 	ret = _log->write_block(key, data, size, &new_block);
@@ -107,7 +102,11 @@ int KvStore::set(uint64_t key, const char *data, size_t size)
 		return ret;
 	}
 
-	_block_allocator->mark_block_as_allocated(new_block);
+	if (invalidate_old_block)
+	{
+		_log->invalidate_block(old_block);
+	}
+
 	return 0;
 }
 
@@ -122,7 +121,7 @@ int KvStore::del(uint64_t key)
 		return ret;
 	}
 
-	ret = _log->release_key(key);
+	ret = _log->mark_key_as_erased(key);
 	if (ret != 0)
 	{
 		return ret;

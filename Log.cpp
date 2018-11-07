@@ -20,12 +20,17 @@ const uint64_t kv_block_signature = 0xB1423CB4C5BCBC4ALL;
 
 struct kv_block_header
 {
+	uint64_t signature;
+	uint64_t key_id;
+	uint64_t sequence;
+	uint16_t data_bytes;
+
 	kv_block_header() :
-		signature(0), key_id(0), data_bytes(0), sequence(0)
+		signature(0), key_id(0), sequence(0), data_bytes(0)
 	{
 	}
 	kv_block_header(uint64_t key_id, uint32_t data_bytes, uint64_t sequence) :
-		signature(kv_block_signature), key_id(key_id), data_bytes(data_bytes), sequence(sequence)
+		signature(kv_block_signature), key_id(key_id), sequence(sequence), data_bytes(data_bytes)
 	{
 	}
 	bool is_allocated() const
@@ -36,14 +41,13 @@ struct kv_block_header
 	{
 		return signature == kv_block_signature;
 	}
-	uint64_t signature;
-	uint64_t key_id;
-	uint64_t sequence;
-	uint16_t data_bytes;
 };
 
 struct kv_block
 {
+	kv_block_header header;
+	char data[MAXBLOB];
+
 	kv_block()
 	{
 
@@ -64,8 +68,6 @@ struct kv_block
 	{
 		return header.validate();
 	}
-	kv_block_header header;
-	char data[MAXBLOB];
 };
 
 template<typename _T>
@@ -85,12 +87,13 @@ private:
 };
 
 
-Log::Log(BlockArray *block_array, BlockAllocator *block_allocator) :
+Log::Log(BlockArray *block_array) :
 	_block_array(block_array),
-	_block_allocator(block_allocator),
+	_block_allocator(NULL),
 	_current_append_point(0),
 	_current_sequence_number(0)
 {
+	_block_allocator = new BlockAllocator(MAXBLOB);
 }
 
 Log::~Log()
@@ -104,8 +107,7 @@ size_t Log::get_raw_block_size()
 
 int Log::format()
 {
-	/// @todo Write some kind of header
-	return 0;
+	return _block_array->truncate();
 }
 
 int Log::read_block(uint32_t block, char *data, size_t bytes_to_read)
@@ -142,7 +144,7 @@ int Log::write_block(uint64_t key, const char *value_data, size_t size, uint32_t
 	return _block_array->write_block(destination_block, (const uint8_t *)block_data);
 }
 
-int Log::release_key(uint64_t key)
+int Log::mark_key_as_erased(uint64_t key)
 {
 	kv_block *block_data = new kv_block(key, 0, NULL, _current_sequence_number++);
 	DeleteOnExit<kv_block> on_exit(block_data);
@@ -154,6 +156,11 @@ int Log::release_key(uint64_t key)
 	}
 
 	return _block_array->write_block(destination_block, (const uint8_t *)block_data);
+}
+
+void Log::invalidate_block(uint32_t block)
+{
+	_block_allocator->free_block(block);
 }
 
 uint32_t Log::advance_append_point()
