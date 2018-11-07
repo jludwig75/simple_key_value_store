@@ -21,6 +21,8 @@ public:
 
 	static size_t get_raw_block_size();
 
+	int format();
+
 	int read_block(uint32_t block, char *block_data, size_t bytes_to_read);
 	int write_block(uint64_t key, const char *block_data, size_t size, uint32_t *block_written);
 	int release_key(uint64_t key);

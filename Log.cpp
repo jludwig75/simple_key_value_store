@@ -25,7 +25,7 @@ struct kv_block_header
 	{
 	}
 	kv_block_header(uint64_t key_id, uint32_t data_bytes, uint64_t sequence) :
-		signature(kv_block_signature), key_id(key_id), data_bytes(data_bytes), sequence(0)
+		signature(kv_block_signature), key_id(key_id), data_bytes(data_bytes), sequence(sequence)
 	{
 	}
 	bool is_allocated() const
@@ -88,7 +88,7 @@ private:
 Log::Log(BlockArray *block_array, BlockAllocator *block_allocator) :
 	_block_array(block_array),
 	_block_allocator(block_allocator),
-	_current_append_point(UINT32_MAX),
+	_current_append_point(0),
 	_current_sequence_number(0)
 {
 }
@@ -100,6 +100,12 @@ Log::~Log()
 size_t Log::get_raw_block_size()
 {
 	return sizeof(kv_block);
+}
+
+int Log::format()
+{
+	/// @todo Write some kind of header
+	return 0;
 }
 
 int Log::read_block(uint32_t block, char *data, size_t bytes_to_read)

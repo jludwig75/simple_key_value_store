@@ -50,6 +50,7 @@ int Directory::store_key(uint64_t key, uint32_t block, size_t bytes)
 			_directory_entries[i].is_allocated = true;
 
 			_number_of_actice_directory_entries++;
+			return 0;
 		}
 	}
 

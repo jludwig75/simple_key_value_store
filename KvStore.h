@@ -34,8 +34,10 @@ public:
 	int del(uint64_t key);
 
 private:
-	BlockArray _block_array;
+	BlockArray *_block_array;
 	Directory *_directory;
 	BlockAllocator *_block_allocator;
 	Log *_log;
+	char *_kv_store_file_name;
+	bool _create;
 };
