@@ -16,7 +16,7 @@ enum operation select_operation()
 {
 	switch(rand() % 6)
 	{
-	case 0:
+	case 0:	// Make this workload set heavy so we're sure to fill up and get failures.
 	case 1:
 	case 2:
 		return op_set;
