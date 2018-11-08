@@ -23,12 +23,17 @@ BlockAllocator::~BlockAllocator()
 	delete[] _bits;
 }
 
-uint32_t BlockAllocator::find_next_free_block(uint32_t starting_block)
+uint32_t BlockAllocator::find_next_free_block(uint32_t starting_block) const
 {
-	assert(starting_block < _number_of_blocks);
-	if (starting_block >= _number_of_blocks)
+	assert(starting_block <= _number_of_blocks);
+	if (starting_block > _number_of_blocks)
 	{
 		return UINT32_MAX;
+	}
+
+	if (starting_block == _number_of_blocks)
+	{
+		starting_block = 0;
 	}
 
 	for (uint32_t b = starting_block; b < _number_of_blocks; b++)
@@ -70,12 +75,12 @@ bool BlockAllocator::is_set(uint32_t block) const
 	return ((1 << block_to_bit(block)) & _bits[block_to_byte(block)]) != 0;
 }
 
-void BlockAllocator::set(uint32_t block) const
+void BlockAllocator::set(uint32_t block)
 {
 	_bits[block_to_byte(block)] |= (1 << block_to_bit(block));
 }
 
-void BlockAllocator::clear(uint32_t block) const
+void BlockAllocator::clear(uint32_t block)
 {
 	_bits[block_to_byte(block)] &= ~(1 << block_to_bit(block));
 }

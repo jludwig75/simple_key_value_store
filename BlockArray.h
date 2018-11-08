@@ -17,7 +17,11 @@ public:
 
 	int open(const char *file_name, bool create);
 
-	int read_block(uint32_t block, uint8_t *block_data);
+	void close();
+
+	int get_file_block_count(uint32_t *total_blocks) const;
+
+	int read_block(uint32_t block, uint8_t *block_data) const;
 
 	int write_block(uint32_t destination_block, const uint8_t *block_data);
 

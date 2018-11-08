@@ -5,28 +5,15 @@
 
 struct kvstor
 {
-	kvstor(const char *file_name, bool create) :
-		store(file_name, create)
-	{
-	}
 	KvStore store;
 };
 
 int	kv_open(struct kvstor **storpp, bool create,
 			int argc, char **argv)
 {
-	kvstor *stor = new kvstor(argv[1], create);
+	kvstor *stor = new kvstor;
 
-	int ret;
-	if (create)
-	{
-		ret = stor->store.format();
-	}
-	else
-	{
-		ret = stor->store.load();
-	}
-
+	int ret = stor->store.open(argv[1], create);
 	if (ret == 0)
 	{
 		*storpp = stor;
@@ -47,7 +34,7 @@ void kv_close(struct kvstor *stor)
 int	kv_get(struct kvstor *stor,
 		       const struct key *k, struct value *v)
 {
-	return stor->store.get(k->id, v->data, &v->size);
+	return stor->store.get(k->id, v->data, v->size, &v->size);
 }
 
 int	kv_set(struct kvstor *stor,

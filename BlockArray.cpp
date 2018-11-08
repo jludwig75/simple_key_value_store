@@ -24,10 +24,7 @@ BlockArray::BlockArray(size_t raw_block_bytes) :
 
 BlockArray::~BlockArray()
 {
-	if (_fd != -1)
-	{
-		close(_fd);
-	}
+	close();
 }
 
 int BlockArray::open(const char *file_name, bool create)
@@ -40,8 +37,42 @@ int BlockArray::open(const char *file_name, bool create)
 	return 0;
 }
 
-int BlockArray::read_block(uint32_t block, uint8_t *block_data)
+void BlockArray::close()
 {
+	if (_fd != -1)
+	{
+		::close(_fd);
+		_fd = -1;
+	}
+}
+
+
+int BlockArray::get_file_block_count(uint32_t *total_blocks) const
+{
+	if (_fd == -1)
+	{
+		return -EBADF;
+	}
+
+	off_t off = lseek(_fd, 0, SEEK_END);
+
+	if (off == (off_t)-1)
+	{
+		return errno;
+	}
+
+	*total_blocks = (uint32_t)(off / _raw_block_bytes);
+	return 0;
+}
+
+
+int BlockArray::read_block(uint32_t block, uint8_t *block_data) const
+{
+	if (_fd == -1)
+	{
+		return -EBADF;
+	}
+
 	if (lseek(_fd, block * _raw_block_bytes, SEEK_SET) == -1)
 	{
 		return errno;
@@ -62,6 +93,11 @@ int BlockArray::read_block(uint32_t block, uint8_t *block_data)
 
 int BlockArray::write_block(uint32_t destination_block, const uint8_t *block_data)
 {
+	if (_fd == -1)
+	{
+		return -EBADF;
+	}
+
 	if (lseek(_fd, destination_block * _raw_block_bytes, SEEK_SET) == -1)
 	{
 		return errno;
@@ -82,6 +118,11 @@ int BlockArray::write_block(uint32_t destination_block, const uint8_t *block_dat
 
 int BlockArray::truncate()
 {
+	if (_fd == -1)
+	{
+		return -EBADF;
+	}
+
 	if (ftruncate(_fd, 0) != 0)
 	{
 		return errno;

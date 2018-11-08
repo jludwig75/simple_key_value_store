@@ -15,15 +15,21 @@
 
 struct directory_entry
 {
-	directory_entry(uint64_t key_id, uint32_t data_block, uint16_t data_bytes) :
+	directory_entry(uint64_t key_id, uint64_t sequence, uint32_t data_block, uint16_t data_bytes) :
 		key_id(key_id),
+		sequence(sequence),
 		data_block(data_block),
 		data_bytes(data_bytes)
 	{
 	}
 	uint64_t key_id;
+	uint64_t sequence;
 	uint32_t data_block;
 	uint16_t data_bytes;
+	bool is_allocated() const
+	{
+		return data_bytes > 0;
+	}
 };
 
 
@@ -49,8 +55,8 @@ static void dir_entry_free(void *node)
 	delete entry;
 }
 
-Directory::Directory(size_t max_number_of_entries) :
-	_entries_root(NULL), _max_directory_entries(max_number_of_entries), _number_of_actice_directory_entries(0)
+Directory::Directory() :
+	_entries_root(NULL)
 {
 }
 
@@ -59,27 +65,39 @@ Directory::~Directory()
 	tdestroy(_entries_root, dir_entry_free);
 }
 
-int Directory::store_key(uint64_t key, uint32_t block, size_t bytes)
+int Directory::store_key(uint64_t key, uint32_t block, size_t bytes, uint64_t sequence, bool *set_as_current_key_entry, uint32_t *replaced_block)
 {
-	if (_number_of_actice_directory_entries >= _max_directory_entries)
+	*set_as_current_key_entry = false;
+	*replaced_block = UINT32_MAX;
+
+	directory_entry *entry = find_entry_for_key(key);
+	if (entry)
 	{
-		return -ENOSPC;
+		if (sequence > entry->sequence)
+		{
+			*replaced_block = entry->data_block;
+			entry->sequence = sequence;
+			entry->data_block = block;
+			entry->data_bytes = bytes;
+			*set_as_current_key_entry = true;
+		}
+		return 0;
 	}
 
-	directory_entry *new_entry = new directory_entry(key, block, bytes);
+	directory_entry *new_entry = new directory_entry(key, sequence, block, bytes);
+	*set_as_current_key_entry = true;
 
 	void *new_node = tsearch(new_entry, &_entries_root, dir_entry_compare);
 	if (!new_node)
 	{
 		return -ENOMEM;
 	}
-	_number_of_actice_directory_entries++;
 	return 0;
 }
 
 directory_entry *Directory::find_entry_for_key(uint64_t key)
 {
-	directory_entry entry_key(key, 0, 0);
+	directory_entry entry_key(key, 0, 0, 0);
 
 	directory_entry **node = (directory_entry **)tfind(&entry_key, &_entries_root, dir_entry_compare);
 	if (!node)
@@ -92,21 +110,21 @@ directory_entry *Directory::find_entry_for_key(uint64_t key)
 
 int Directory::lookup_key(uint64_t key, uint32_t *block, size_t *bytes)
 {
-	directory_entry *enrty = find_entry_for_key(key);
-	if (!enrty)
+	directory_entry *entry = find_entry_for_key(key);
+	if (!entry || !entry->is_allocated())
 	{
 		return -ENOENT;
 	}
 
-	*block = enrty->data_block;
-	*bytes = enrty->data_bytes;
+	*block = entry->data_block;
+	*bytes = entry->data_bytes;
 	return 0;
 }
 
 int Directory::remove_key(uint64_t key)
 {
 	directory_entry *entry = find_entry_for_key(key);
-	if (!entry)
+	if (!entry || !entry->is_allocated())
 	{
 		return -ENOENT;
 	}
@@ -116,6 +134,5 @@ int Directory::remove_key(uint64_t key)
 		return -EFAULT;
 	}
 	delete entry;
-	_number_of_actice_directory_entries--;
 	return 0;
 }

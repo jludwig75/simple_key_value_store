@@ -83,6 +83,7 @@ int kv_set_get_cmp(struct kvstor *stor)
 
 	struct value_buffer output_value_buffer;
 	struct value *output_value = (struct value *)&output_value_buffer;
+	output_value->size = MAXBLOB;
 	ret = kv_get(stor, &k, output_value);
 	if (ret != 0)
 	{
@@ -173,6 +174,75 @@ int kv_set__can_replace_max_values(struct kvstor *stor)
 	return 0;
 }
 
+int kv_store_can_persist(int argc, char **argv)
+{
+	struct kvstor *stor;
+
+	int ret = kv_open(&stor, true, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	const size_t keys_to_store = MAXKEYS;
+	size_t i;
+
+	for(i = 0; i < keys_to_store; i++)
+	{
+		struct key k;
+		k.id = i;
+
+		struct value_buffer value_buffer;
+		struct value *value = (struct value *)&value_buffer;
+		memset(value->data, i, MAXBLOB);
+		value->size = MAXBLOB;
+
+		ret = kv_set(stor, &k, value);
+		if (ret != 0)
+		{
+			return ret;
+		}
+	}
+
+	kv_close(stor);
+
+	ret = kv_open(&stor, false, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	for(i = 0; i < keys_to_store; i++)
+	{
+		struct key k;
+		k.id = i;
+
+		struct value_buffer expected_value_buffer;
+		struct value *expected_value = (struct value *)&expected_value_buffer;
+		memset(expected_value->data, i, MAXBLOB);
+		expected_value->size = MAXBLOB;
+
+		struct value_buffer actual_value_buffer;
+		struct value *actual_value = (struct value *)&actual_value_buffer;
+		actual_value->size = MAXBLOB;
+
+		int ret = kv_get(stor, &k, actual_value);
+		if (ret != 0)
+		{
+			return ret;
+		}
+
+		if (expected_value->size != actual_value->size || memcmp(expected_value->data, actual_value->data, expected_value->size) != 0)
+		{
+			return -1;
+		}
+	}
+
+	kv_close(stor);
+
+	return 0;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -192,6 +262,7 @@ main(int argc, char **argv)
 
 	struct value_buffer output_value_buffer;
 	struct value *output_value = (struct value *)&output_value_buffer;
+	output_value->size = MAXBLOB;
 	test(kv_get(stor, &k, output_value) == 0, "kv_get");
 
 	test(kv_del(stor, &k) == 0, "kv_del");
@@ -203,6 +274,8 @@ main(int argc, char **argv)
 	test(kv_set__can_replace_max_values(stor) == 0, "kv_set__can_replace_max_values");
 
 	kv_close(stor);
+
+	test(kv_store_can_persist(argc, argv) == 0, "kv_store_can_persist");
 
 	printf("%u failed out of %u run\n", testfail, testnum);
 	return 0;

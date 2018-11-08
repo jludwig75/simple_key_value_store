@@ -86,7 +86,7 @@ TEST(Log, read_block__returns_EFAULT_if_block_validation_fails)
 	CHECK_EQUAL(-EFAULT, log.read_block(test_block, test_buffer, sizeof(test_buffer)))
 }
 
-TEST(Log, write_block__finds_next_free_block_and_writes_to_that_block)
+TEST(Log, write_key_value__finds_next_free_block_and_writes_to_that_block)
 {
 	BlockArray block_array(Log::get_raw_block_size());
 	Log log(&block_array);
@@ -105,7 +105,7 @@ TEST(Log, write_block__finds_next_free_block_and_writes_to_that_block)
 	uint64_t key = 0x5423785934;
 	const char *test_value = "This is a test value";
 	uint32_t block_written;
-	CHECK_EQUAL(0, log.write_block(key, test_value, strlen(test_value), &block_written))
+	CHECK_EQUAL(0, log.write_key_value(key, test_value, strlen(test_value), &block_written))
 }
 
 int main(int argc, char *argv[])
