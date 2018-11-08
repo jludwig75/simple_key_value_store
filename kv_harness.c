@@ -243,6 +243,143 @@ int kv_store_can_persist(int argc, char **argv)
 	return 0;
 }
 
+struct test_value_data
+{
+	uint64_t key;
+	uint64_t version;
+};
+
+struct test_value_data_buffer
+{
+	size_t  size;
+	struct test_value_data data;
+};
+
+int kv_store_retrieves_latest_persisted_keys_after_overwrites(int argc, char **argv)
+{
+	struct kvstor *stor;
+
+	int ret = kv_open(&stor, true, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	const size_t keys_to_store = 100;
+	const size_t versions_to_write = 100;
+	size_t i;
+	uint32_t v;
+
+	for(v = 0; v < versions_to_write; v++)
+	{
+		for(i = 0; i < keys_to_store; i++)
+		{
+			struct key k;
+			k.id = i;
+
+			struct test_value_data_buffer data_to_store;
+			data_to_store.size = sizeof(data_to_store.data);
+			data_to_store.data.key = k.id;
+			data_to_store.data.version = v;
+
+			ret = kv_set(stor, &k, (struct value*)&data_to_store);
+			if (ret != 0)
+			{
+				return ret;
+			}
+		}
+	}
+
+	for(i = 0; i < keys_to_store; i++)
+	{
+		struct key k;
+		k.id = i;
+
+
+		struct test_value_data_buffer retrieved_value;
+
+		int ret = kv_get(stor, &k, (struct value*)&retrieved_value);
+		if (ret != 0)
+		{
+			return ret;
+		}
+
+		if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != versions_to_write - 1)
+		{
+			return -1;
+		}
+	}
+
+	kv_close(stor);
+
+	return 0;
+}
+
+int kv_store_retrieves_latest_persisted_keys_after_deletes(int argc, char **argv)
+{
+	struct kvstor *stor;
+
+	int ret = kv_open(&stor, true, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	const size_t keys_to_store = 100;
+	const size_t versions_to_write = 100;
+	size_t i;
+	uint32_t v;
+
+	for(v = 0; v < versions_to_write; v++)
+	{
+		for(i = 0; i < keys_to_store; i++)
+		{
+			struct key k;
+			k.id = 0x1000000 | i;
+
+			if (v > 0)
+			{
+				kv_del(stor, &k);
+			}
+
+			struct test_value_data_buffer data_to_store;
+			data_to_store.size = sizeof(data_to_store.data);
+			data_to_store.data.key = k.id;
+			data_to_store.data.version = v;
+
+			ret = kv_set(stor, &k, (struct value*)&data_to_store);
+			if (ret != 0)
+			{
+				return ret;
+			}
+		}
+	}
+
+	for(i = 0; i < keys_to_store; i++)
+	{
+		struct key k;
+		k.id = 0x1000000 | i;
+
+
+		struct test_value_data_buffer retrieved_value;
+
+		int ret = kv_get(stor, &k, (struct value*)&retrieved_value);
+		if (ret != 0)
+		{
+			return ret;
+		}
+
+		if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != versions_to_write - 1)
+		{
+			return -1;
+		}
+	}
+
+	kv_close(stor);
+
+	return 0;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -276,6 +413,10 @@ main(int argc, char **argv)
 	kv_close(stor);
 
 	test(kv_store_can_persist(argc, argv) == 0, "kv_store_can_persist");
+
+	test(kv_store_retrieves_latest_persisted_keys_after_overwrites(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_after_overwrites");
+
+	test(kv_store_retrieves_latest_persisted_keys_after_deletes(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_after_deletes");
 
 	printf("%u failed out of %u run\n", testfail, testnum);
 	return 0;
