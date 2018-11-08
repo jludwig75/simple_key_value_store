@@ -9,28 +9,54 @@
 
 #include <errno.h>
 #include <assert.h>
+#include <search.h>
+#include <stdio.h>
 
 
 struct directory_entry
 {
-	directory_entry() : is_allocated(false), key_id(0), data_block(UINT32_MAX), data_bytes(0)
+	directory_entry(uint64_t key_id, uint32_t data_block, uint16_t data_bytes) :
+		key_id(key_id),
+		data_block(data_block),
+		data_bytes(data_bytes)
 	{
 	}
-	bool is_allocated;
 	uint64_t key_id;
 	uint32_t data_block;
 	uint16_t data_bytes;
 };
 
-Directory::Directory(size_t max_number_of_entries) :
-	_directory_entries(NULL), _max_directory_entries(max_number_of_entries), _number_of_actice_directory_entries(0)
+
+static int dir_entry_compare(const void *pa, const void *pb)
 {
-	_directory_entries = new directory_entry[_max_directory_entries];
+	const directory_entry *entry_a = (const directory_entry *)pa;
+	const directory_entry *entry_b = (const directory_entry *)pb;
+
+	if (entry_a->key_id < entry_b->key_id)
+	{
+		return -1;
+	}
+	if (entry_a->key_id > entry_b->key_id)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+static void dir_entry_free(void *node)
+{
+	directory_entry *entry = (directory_entry *)node;
+	delete entry;
+}
+
+Directory::Directory(size_t max_number_of_entries) :
+	_entries_root(NULL), _max_directory_entries(max_number_of_entries), _number_of_actice_directory_entries(0)
+{
 }
 
 Directory::~Directory()
 {
-	delete [] _directory_entries;
+	tdestroy(_entries_root, dir_entry_free);
 }
 
 int Directory::store_key(uint64_t key, uint32_t block, size_t bytes)
@@ -40,59 +66,56 @@ int Directory::store_key(uint64_t key, uint32_t block, size_t bytes)
 		return -ENOSPC;
 	}
 
-	for(size_t i = 0; i < _max_directory_entries; i++)
+	directory_entry *new_entry = new directory_entry(key, block, bytes);
+
+	void *new_node = tsearch(new_entry, &_entries_root, dir_entry_compare);
+	if (!new_node)
 	{
-		if (!_directory_entries[i].is_allocated)
-		{
-			_directory_entries[i].key_id = key;
-			_directory_entries[i].data_bytes = bytes;
-			_directory_entries[i].data_block = block;
-			_directory_entries[i].is_allocated = true;
-
-			_number_of_actice_directory_entries++;
-			return 0;
-		}
+		return -ENOMEM;
 	}
-
-	assert(false && "This should not be possible");
-	return -ENOSPC;
+	_number_of_actice_directory_entries++;
+	return 0;
 }
 
-size_t Directory::find_entry_index_for_key(uint64_t key)
+directory_entry *Directory::find_entry_for_key(uint64_t key)
 {
-	for(size_t i = 0; i < _max_directory_entries; i++)
+	directory_entry entry_key(key, 0, 0);
+
+	directory_entry **node = (directory_entry **)tfind(&entry_key, &_entries_root, dir_entry_compare);
+	if (!node)
 	{
-		if (_directory_entries[i].is_allocated && _directory_entries[i].key_id == key)
-		{
-			return i;
-		}
+		return NULL;
 	}
 
-	return _max_directory_entries;
+	return *node;
 }
 
 int Directory::lookup_key(uint64_t key, uint32_t *block, size_t *bytes)
 {
-	size_t index = find_entry_index_for_key(key);
-	if (index == _max_directory_entries)
+	directory_entry *enrty = find_entry_for_key(key);
+	if (!enrty)
 	{
 		return -ENOENT;
 	}
 
-	*block = _directory_entries[index].data_block;
-	*bytes = _directory_entries[index].data_bytes;
+	*block = enrty->data_block;
+	*bytes = enrty->data_bytes;
 	return 0;
 }
 
 int Directory::remove_key(uint64_t key)
 {
-	size_t index = find_entry_index_for_key(key);
-	if (index == _max_directory_entries)
+	directory_entry *entry = find_entry_for_key(key);
+	if (!entry)
 	{
 		return -ENOENT;
 	}
 
-	_directory_entries[index].is_allocated = false;
+	if (!tdelete(entry, &_entries_root, dir_entry_compare))
+	{
+		return -EFAULT;
+	}
+	delete entry;
 	_number_of_actice_directory_entries--;
 	return 0;
 }

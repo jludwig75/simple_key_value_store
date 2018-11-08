@@ -78,7 +78,7 @@ int Log::read_block(uint32_t block, char *data, size_t bytes_to_read)
 		return -EFAULT;
 	}
 
-	memcpy(data, block_data, bytes_to_read);
+	memcpy(data, block_data->data, bytes_to_read);
 
 	return 0;
 }

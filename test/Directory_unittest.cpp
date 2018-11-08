@@ -106,5 +106,5 @@ TEST(Directory, remove_key__returns_ENOENT_if_key_not_stored)
 
 int main(int argc, char *argv[])
 {
-	return CommandLineTestRunner::RunAllTests(argc, argv);
+    return CommandLineTestRunner::RunAllTests(argc, argv);
 }

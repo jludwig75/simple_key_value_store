@@ -26,7 +26,7 @@ public:
 
 	int close();
 
-	int get(uint64_t key, char **data, size_t *data_size) const;
+	int get(uint64_t key, char *data, size_t *data_size) const;
 
 	int set(uint64_t key, const char *data, size_t size);
 

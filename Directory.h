@@ -22,9 +22,9 @@ public:
 	int remove_key(uint64_t key);
 
 private:
-	size_t find_entry_index_for_key(uint64_t key);
+	directory_entry *find_entry_for_key(uint64_t key);
 
-	directory_entry *_directory_entries;
+	void *_entries_root;
 	const size_t _max_directory_entries;
 	size_t _number_of_actice_directory_entries;
 };

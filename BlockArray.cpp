@@ -32,7 +32,7 @@ BlockArray::~BlockArray()
 
 int BlockArray::open(const char *file_name, bool create)
 {
-	_fd = ::open(file_name, O_RDWR | (create ? O_CREAT : 0));
+	_fd = ::open(file_name, O_RDWR | (create ? O_CREAT : 0), S_IRWXU);
 	if (_fd == -1)
 	{
 		return errno;
@@ -82,6 +82,10 @@ int BlockArray::write_block(uint32_t destination_block, const uint8_t *block_dat
 
 int BlockArray::truncate()
 {
-	ftruncate(_fd, 0);
+	if (ftruncate(_fd, 0) != 0)
+	{
+		return errno;
+	}
+
 	return 0;
 }
