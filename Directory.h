@@ -12,7 +12,8 @@
 
 struct directory_entry;
 
-class Directory {
+class Directory
+{
 public:
 	Directory();
 	virtual ~Directory();

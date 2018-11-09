@@ -73,6 +73,8 @@ int Directory::store_key(uint64_t key, uint32_t block, size_t bytes, uint64_t se
 	directory_entry *entry = find_entry_for_key(key);
 	if (entry)
 	{
+		// This should never happen.
+		assert(sequence != entry->sequence);
 		if (sequence > entry->sequence)
 		{
 			*replaced_block = entry->data_block;
