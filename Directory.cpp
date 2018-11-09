@@ -87,10 +87,16 @@ int Directory::store_key(uint64_t key, uint32_t block, size_t bytes, uint64_t se
 	directory_entry *new_entry = new directory_entry(key, sequence, block, bytes);
 	*set_as_current_key_entry = true;
 
-	void *new_node = tsearch(new_entry, &_entries_root, dir_entry_compare);
+	directory_entry **new_node = (directory_entry **)tsearch(new_entry, &_entries_root, dir_entry_compare);
 	if (!new_node)
 	{
 		return -ENOMEM;
+	}
+	if (*new_node != new_entry)
+	{
+		// Our allocated entry was not stored.
+		// Delete it here.
+		delete new_entry;
 	}
 	return 0;
 }

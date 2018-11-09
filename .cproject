@@ -52,7 +52,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -109,7 +109,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -169,7 +169,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|Directory.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|Directory.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -229,7 +229,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|BlockAllocator.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/BlockAllocater_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|BlockAllocator.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/BlockAllocater_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -289,7 +289,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/Directory_unittest.cpp|Directory.cpp|BlockAllocator.cpp|test/BlockAllocater_unittest.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/Directory_unittest.cpp|Directory.cpp|BlockAllocator.cpp|test/BlockAllocater_unittest.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -365,7 +365,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ConfigName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.debug.1497189716.1094624968" name="kv_stress_Debug" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=" parent="cdt.managedbuild.config.gnu.cross.exe.debug">
+				<configuration artifactName="${ConfigName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.debug.1497189716.1094624968" name="kv_stress_Debug" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=" parent="cdt.managedbuild.config.gnu.cross.exe.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.debug.1497189716.1094624968." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.debug.2134181049" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.66755173" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
