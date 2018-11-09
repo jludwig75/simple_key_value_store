@@ -290,6 +290,14 @@ int kv_store_retrieves_latest_persisted_keys_after_overwrites(int argc, char **a
 		}
 	}
 
+	kv_close(stor);
+
+	ret = kv_open(&stor, false, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
 	for(i = 0; i < keys_to_store; i++)
 	{
 		struct key k;
@@ -301,11 +309,13 @@ int kv_store_retrieves_latest_persisted_keys_after_overwrites(int argc, char **a
 		int ret = kv_get(stor, &k, (struct value*)&retrieved_value);
 		if (ret != 0)
 		{
+			fprintf(stderr, "Could not retrieve value for key\n");
 			return ret;
 		}
 
 		if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != versions_to_write - 1)
 		{
+			fprintf(stderr, "Found KV mismatch\n");
 			return -1;
 		}
 	}
@@ -355,6 +365,14 @@ int kv_store_retrieves_latest_persisted_keys_after_deletes(int argc, char **argv
 		}
 	}
 
+	kv_close(stor);
+
+	ret = kv_open(&stor, false, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
 	for(i = 0; i < keys_to_store; i++)
 	{
 		struct key k;
@@ -366,11 +384,13 @@ int kv_store_retrieves_latest_persisted_keys_after_deletes(int argc, char **argv
 		int ret = kv_get(stor, &k, (struct value*)&retrieved_value);
 		if (ret != 0)
 		{
+			fprintf(stderr, "Could not retrieve value for key\n");
 			return ret;
 		}
 
 		if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != versions_to_write - 1)
 		{
+			fprintf(stderr, "Found KV mismatch\n");
 			return -1;
 		}
 	}

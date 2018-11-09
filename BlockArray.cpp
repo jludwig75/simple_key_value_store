@@ -29,7 +29,7 @@ BlockArray::~BlockArray()
 
 int BlockArray::open(const char *file_name, bool create)
 {
-	_fd = ::open(file_name, O_RDWR | (create ? O_CREAT : 0), S_IRWXU);
+	_fd = ::open(file_name, O_RDWR | (create ? (O_CREAT | O_TRUNC) : 0), S_IRWXU);
 	if (_fd == -1)
 	{
 		return errno;

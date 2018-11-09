@@ -52,7 +52,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="kv_checker.c|test_director.c|kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -109,7 +109,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="kv_checker.c|test_director.c|kv_stress.c|KvStore_old.cpp|test/BlockArray_mock.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|cpputest|test/BlockAllocater_unittest.cpp|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -169,7 +169,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|Directory.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="kv_checker.c|test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/Directory_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|Directory.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -229,7 +229,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|BlockAllocator.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/BlockAllocater_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="kv_checker.c|test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/kv_block_mock.cpp|BlockAllocator.cpp|test/Log_unittest.cpp|test/BlockAllocater_mock.cpp|test/BlockAllocater_unittest.cpp|Log.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -289,7 +289,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/Directory_unittest.cpp|Directory.cpp|BlockAllocator.cpp|test/BlockAllocater_unittest.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="kv_checker.c|test_director.c|kv_stress.c|KvStore_old.cpp|kv_store.cpp|kv_store.c|kv_block.cpp|test/Directory_unittest.cpp|Directory.cpp|BlockAllocator.cpp|test/BlockAllocater_unittest.cpp|KvStore.cpp|kv_store_driver.cpp|BlockArray.cpp|kv_harness.c|cpputest/scripts|cpputest/tests|cpputest/platforms_examples|cpputest/platforms|cpputest/m4|cpputest/include|cpputest/generated|cpputest/examples|cpputest/docs|cpputest/cpputest_build|cpputest/cmake|cpputest/builds|cpputest/build|cpputest/src/Platforms/VisualCpp|cpputest/src/Platforms/Symbian|cpputest/src/Platforms/Keil|cpputest/src/Platforms/Iar|cpputest/src/Platforms/GccNoStdC|cpputest/src/Platforms/Dos|cpputest/src/Platforms/C2000|cpputest/src/Platforms/armcc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

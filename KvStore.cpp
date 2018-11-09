@@ -118,10 +118,7 @@ int KvStore::scan()
 				_block_allocator->mark_block_as_allocated(b);
 			}
 
-			if (block.is_allocated())
-			{
-				update_append_point(b, block.header.sequence);
-			}
+			update_append_point(b, block.header.sequence);
 		}
 	}
 
