@@ -23,7 +23,7 @@ struct test_director
 
 int test_director__init(struct test_director **director, unsigned random_seed, struct kv_checker *checker, int argc, char **argv)
 {
-	*director = malloc(sizeof(struct test_director));
+	*director = (struct test_director *)malloc(sizeof(struct test_director));
 	if (!director)
 	{
 		return -ENOMEM;

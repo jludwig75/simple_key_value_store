@@ -1,6 +1,5 @@
 #include "kv_checker.h"
 
-#define _GNU_SOURCE
 #include <search.h>
 #include <errno.h>
 #include <string.h>
@@ -27,7 +26,7 @@ static struct value *duplicate_value(const struct value *source)
 	}
 
 	size_t value_struct_size = sizeof(struct value) + source->size;
-	struct value *new_value = malloc(value_struct_size);
+	struct value *new_value = (struct value *)malloc(value_struct_size);
 	if (new_value)
 	{
 		memcpy(new_value, source, value_struct_size);
@@ -55,7 +54,7 @@ static int kv_node__compare(const void *pa, const void *pb)
 
 int kv_checker__init(struct kv_checker **checker)
 {
-	*checker = malloc(sizeof(struct kv_checker));
+	*checker = (struct kv_checker *)malloc(sizeof(struct kv_checker));
 	if (!*checker)
 	{
 		return -ENOMEM;
@@ -78,7 +77,7 @@ void kv_checker__cleanup(struct kv_checker **checker)
 
 int kv_checker__store_value(struct kv_checker *checker, const struct key *k, const struct value *v)
 {
-	struct kv_node *search_node = malloc(sizeof(struct kv_node));
+	struct kv_node *search_node = (struct kv_node *)malloc(sizeof(struct kv_node));
 	if (!search_node)
 	{
 		return -ENOMEM;
@@ -93,7 +92,7 @@ int kv_checker__store_value(struct kv_checker *checker, const struct key *k, con
 		return -ENOMEM;
 	}
 
-	struct kv_node **entry = tsearch(search_node, &checker->value_root, kv_node__compare);
+	struct kv_node **entry = (struct kv_node **)tsearch(search_node, &checker->value_root, kv_node__compare);
 	if (!entry)
 	{
 		// A new value could not be added.
@@ -122,7 +121,7 @@ int kv_checker__check_value(const struct kv_checker *checker, const struct key *
 	struct kv_node search_key;
 	search_key.key = *k;
 
-	struct kv_node **entry = tfind(&search_key, &checker->value_root, kv_node__compare);
+	struct kv_node **entry = (struct kv_node **)tfind(&search_key, &checker->value_root, kv_node__compare);
 	if (!entry)
 	{
 		*values_match = false;
@@ -146,7 +145,7 @@ int kv_checker__delete_value(struct kv_checker *checker, const struct key *k)
 	struct kv_node search_key;
 	search_key.key = *k;
 
-	struct kv_node **entry = tfind(&search_key, &checker->value_root, kv_node__compare);
+	struct kv_node **entry = (struct kv_node **)tfind(&search_key, &checker->value_root, kv_node__compare);
 	if (!entry)
 	{
 		return -ENOENT;

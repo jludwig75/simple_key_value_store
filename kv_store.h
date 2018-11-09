@@ -26,14 +26,14 @@ struct value {
 };
 
 /* forward declare the access functions */
-extern int	kv_open(struct kvstor **storpp, bool create,
+int	kv_open(struct kvstor **storpp, bool create,
 			int argc, char **argv);
-extern void	kv_close(struct kvstor *stor);
-extern int	kv_get(struct kvstor *stor,
+void	kv_close(struct kvstor *stor);
+int	kv_get(struct kvstor *stor,
 		       const struct key *k, struct value *v);
-extern int	kv_set(struct kvstor *stor,
+int	kv_set(struct kvstor *stor,
 		       const struct key *k, const struct value *v);
-extern int	kv_del(struct kvstor *stor, const struct key *k);
+int	kv_del(struct kvstor *stor, const struct key *k);
 
 #ifdef __cplusplus
 }	// extern "C"
