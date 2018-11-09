@@ -9,6 +9,8 @@
 #include "BlockAllocator.h"
 #include "BlockArray.h"
 #include "Directory.h"
+#include "AppendPoint.h"
+
 #include "kv_block.h"
 
 #include "kv_store.h"
@@ -39,6 +41,7 @@ KvStore::KvStore() :
 	_block_array(NULL),
 	_directory(NULL),
 	_block_allocator(NULL),
+	_append_point(NULL),
 	_current_append_point(0),
 	_current_sequence_number(0),
 	_last_scanned_sequence_number(0)
@@ -46,6 +49,7 @@ KvStore::KvStore() :
 	_block_allocator = new BlockAllocator(MAXKEYS + 1);
 	_block_array = new BlockArray(sizeof(kv_block));
 	_directory = new Directory;
+	_append_point = new AppendPoint(_block_allocator);
 }
 
 KvStore::~KvStore()
@@ -110,7 +114,7 @@ int KvStore::scan()
 
 			if (replaced_block != UINT32_MAX)
 			{
-				invalidate_block(replaced_block);
+				_block_allocator->free_block(replaced_block);
 			}
 
 			if (set_as_latest_entry_for_key && block.is_allocated())
@@ -118,7 +122,7 @@ int KvStore::scan()
 				_block_allocator->mark_block_as_allocated(b);
 			}
 
-			update_append_point(b, block.header.sequence);
+			_append_point->update_append_point(b, block.header.sequence);
 		}
 	}
 
@@ -169,7 +173,7 @@ int KvStore::set(uint64_t key, const char *value_data, size_t size)
 	kv_block *block_data = new kv_block(key, (uint32_t)size, value_data, my_sequence);
 	DeleteOnExit<kv_block> on_exit(block_data);
 
-	uint32_t destination_block = advance_append_point();
+	uint32_t destination_block = _append_point->get_append_point();
 	if (destination_block == UINT32_MAX)
 	{
 		return -ENOSPC;
@@ -213,7 +217,7 @@ int KvStore::del(uint64_t key)
 	kv_block *block_data = new kv_block(key, 0, NULL, _current_sequence_number++);
 	DeleteOnExit<kv_block> on_exit(block_data);
 
-	uint32_t destination_block = advance_append_point();
+	uint32_t destination_block = _append_point->get_append_point();
 	if (destination_block == UINT32_MAX)
 	{
 		return -ENOSPC;
@@ -231,27 +235,7 @@ int KvStore::del(uint64_t key)
 		return ret;
 	}
 
-	invalidate_block(old_block);
+	_block_allocator->free_block(old_block);
 
 	return 0;
-}
-
-void KvStore::invalidate_block(uint32_t block)
-{
-	_block_allocator->free_block(block);
-}
-
-uint32_t KvStore::advance_append_point()
-{
-	_current_append_point = _block_allocator->find_next_free_block(_current_append_point == UINT32_MAX ? 0 : _current_append_point);
-	return _current_append_point;
-}
-
-void KvStore::update_append_point(uint32_t block, uint64_t sequence)
-{
-	if (sequence >= _last_scanned_sequence_number)	// >= to handle only block 0 written.
-	{
-		_current_append_point = block;
-		_last_scanned_sequence_number = sequence;
-	}
 }

@@ -13,6 +13,7 @@
 class BlockArray;
 class BlockAllocator;
 class Directory;
+class AppendPoint;
 
 
 class KvStore {
@@ -29,13 +30,11 @@ public:
 
 private:
 	int scan();
-	void invalidate_block(uint32_t block);
-	uint32_t advance_append_point();
-	void update_append_point(uint32_t block, uint64_t sequence);
 
 	BlockArray *_block_array;
 	Directory *_directory;
 	BlockAllocator *_block_allocator;
+	AppendPoint *_append_point;
 
 	uint32_t _current_append_point;
 	uint64_t _current_sequence_number;
