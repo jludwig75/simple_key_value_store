@@ -189,7 +189,7 @@ int kv_del(struct kvstor *store, const struct key *k)
     if (size == 0)
     {
         // This is an entry for a deleted key
-            return -ENOENT;
+        return -ENOENT;
     }
 
     uint64_t my_sequence = ++store->current_sequence_number;
