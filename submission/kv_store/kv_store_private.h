@@ -10,10 +10,10 @@
 
 struct kvstor
 {
-	struct kv_block_array *block_array;
-	struct kv_directory *directory;
-	struct kv_block_allocator *block_allocator;
-	struct kv_append_point *append_point;
+    struct kv_block_array *block_array;
+    struct kv_directory *directory;
+    struct kv_block_allocator *block_allocator;
+    struct kv_append_point *append_point;
 
-	uint64_t current_sequence_number;
+    uint64_t current_sequence_number;
 };

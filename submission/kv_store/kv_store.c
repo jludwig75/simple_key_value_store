@@ -104,11 +104,11 @@ int kv_get(struct kvstor *store, const struct key *k, struct value *v)
     {
         return ret;
     }
-	if (stored_value_size == 0)
-	{
-		// This is an entry for a deleted key
-		return -ENOENT;
-	}
+    if (stored_value_size == 0)
+    {
+        // This is an entry for a deleted key
+        return -ENOENT;
+    }
     if (v->size < stored_value_size)
     {
         return -EINVAL;
@@ -186,16 +186,16 @@ int kv_del(struct kvstor *store, const struct key *k)
     {
         return ret;
     }
-	if (size == 0)
-	{
-		// This is an entry for a deleted key
-		return -ENOENT;
-	}
+    if (size == 0)
+    {
+        // This is an entry for a deleted key
+            return -ENOENT;
+    }
 
-	uint64_t my_sequence = ++store->current_sequence_number;
+    uint64_t my_sequence = ++store->current_sequence_number;
 
-	/// @todo Allocate on heap rather than stack
-	struct kv_block block_data;
+    /// @todo Allocate on heap rather than stack
+    struct kv_block block_data;
     kv_block__init(&block_data, k->id, 0, NULL, my_sequence);
 
     uint32_t destination_block = kv_append_point__get_append_point(store->append_point);
@@ -210,21 +210,21 @@ int kv_del(struct kvstor *store, const struct key *k)
         return ret;
     }
 
-	bool set_as_latest_entry_for_key;
-	uint32_t replaced_block;
-	ret = kv_directory__store_key(store->directory, k->id, destination_block, 0, my_sequence, &set_as_latest_entry_for_key, &replaced_block);
-	if (ret != 0)
-	{
-		return ret;
-	}
+    bool set_as_latest_entry_for_key;
+    uint32_t replaced_block;
+    ret = kv_directory__store_key(store->directory, k->id, destination_block, 0, my_sequence, &set_as_latest_entry_for_key, &replaced_block);
+    if (ret != 0)
+    {
+        return ret;
+    }
 
-	if (replaced_block != UINT32_MAX)
-	{
-		kv_block_allocator__free_block(store->block_allocator, replaced_block);
-	}
+    if (replaced_block != UINT32_MAX)
+    {
+        kv_block_allocator__free_block(store->block_allocator, replaced_block);
+    }
 
-	assert(set_as_latest_entry_for_key);
-	kv_block_allocator__mark_block_as_allocated(store->block_allocator, destination_block);
+    assert(set_as_latest_entry_for_key);
+    kv_block_allocator__mark_block_as_allocated(store->block_allocator, destination_block);
 
     return 0;
 }

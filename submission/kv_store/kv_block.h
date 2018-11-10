@@ -15,8 +15,8 @@ struct kv_block_header
     uint64_t key_id;
     uint64_t sequence;
     uint16_t data_bytes;
-	uint16_t pad1;
-	uint32_t pad2;
+    uint16_t pad1;
+    uint32_t pad2;
 };
 
 struct kv_block

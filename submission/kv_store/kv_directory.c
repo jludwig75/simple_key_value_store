@@ -108,10 +108,10 @@ int kv_directory__store_key(struct kv_directory *directory, uint64_t key, uint32
         assert(sequence != entry->sequence);
         if (sequence > entry->sequence)
         {
-			//if (entry->data_bytes == 0)
-			//{
-			//	printf("2");
-			//}
+            //if (entry->data_bytes == 0)
+            //{
+            //    printf("2");
+            //}
             *replaced_block = entry->data_block;
             entry->sequence = sequence;
             entry->data_block = block;
