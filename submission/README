@@ -1,0 +1,5 @@
+To build:
+./build
+
+To test:
+./test
