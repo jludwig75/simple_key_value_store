@@ -17,5 +17,5 @@ void *tdelete(const void *entry, void **root, compare_node_call compare_node);
 void tdestroy(void *root, free_node_call free_node);
 
 #ifdef __cplusplus
-}	// extern "C"
+}    // extern "C"
 #endif // __cplusplus

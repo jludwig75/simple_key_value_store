@@ -12,49 +12,49 @@
 
 struct kv_append_point
 {
-	struct kv_block_allocator *block_allocator;
-	uint32_t current_append_point;
-	uint64_t last_scanned_sequence_number;
+    struct kv_block_allocator *block_allocator;
+    uint32_t current_append_point;
+    uint64_t last_scanned_sequence_number;
 };
 
 int kv_append_point__init(struct kv_append_point **append_point, struct kv_block_allocator *block_allocator)
 {
-	*append_point = (struct kv_append_point *)malloc(sizeof(struct kv_append_point));
-	if (!*append_point)
-	{
-		return -ENOMEM;
-	}
+    *append_point = (struct kv_append_point *)malloc(sizeof(struct kv_append_point));
+    if (!*append_point)
+    {
+        return -ENOMEM;
+    }
 
-	(*append_point)->block_allocator = block_allocator;
-	(*append_point)->current_append_point = 0;
-	(*append_point)->last_scanned_sequence_number = 0;
+    (*append_point)->block_allocator = block_allocator;
+    (*append_point)->current_append_point = 0;
+    (*append_point)->last_scanned_sequence_number = 0;
 
-	return 0;
+    return 0;
 }
 
 void kv_append_point__cleanup(struct kv_append_point **append_point)
 {
-	free(*append_point);
-	*append_point = NULL;
+    free(*append_point);
+    *append_point = NULL;
 }
 
 
 uint32_t kv_append_point__get_append_point(struct kv_append_point *append_point)
 {
-	if (append_point->current_append_point == UINT32_MAX)
-	{
-		// If we ran out of space before, start back at 0.
-		append_point->current_append_point = 0;
-	}
-	append_point->current_append_point = kv_block_allocator__find_next_free_block(append_point->block_allocator, append_point->current_append_point);
-	return append_point->current_append_point;
+    if (append_point->current_append_point == UINT32_MAX)
+    {
+        // If we ran out of space before, start back at 0.
+        append_point->current_append_point = 0;
+    }
+    append_point->current_append_point = kv_block_allocator__find_next_free_block(append_point->block_allocator, append_point->current_append_point);
+    return append_point->current_append_point;
 }
 
 void kv_append_point__update_append_point(struct kv_append_point *append_point, uint32_t block, uint64_t sequence)
 {
-	if (sequence >= append_point->last_scanned_sequence_number)	// >= to handle only block 0 written.
-	{
-		append_point->current_append_point = block;
-		append_point->last_scanned_sequence_number = sequence;
-	}
+    if (sequence >= append_point->last_scanned_sequence_number)    // >= to handle only block 0 written.
+    {
+        append_point->current_append_point = block;
+        append_point->last_scanned_sequence_number = sequence;
+    }
 }
