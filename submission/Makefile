@@ -1,9 +1,9 @@
 CC=gcc
 CXX=g++
-CFLAGS=-D_GNU_SOURCE -I./kv_store -I./test_director -Wno-write-strings -g
+CFLAGS=-D_GNU_SOURCE -I./kv_store -I./test_director -Wno-write-strings
 
 KV_STOR_OBJS = $(patsubst %.c,%.o,$(wildcard kv_store/*.c))
-TEST_DIRECTOR_OBJS = test_director/test_director.o test_director/kv_checker.o
+TEST_DIRECTOR_OBJS = $(patsubst %.c,%.o,$(wildcard test_director/*.c))
 
 KV_HARNESS_OBJS = kv_harness.o
 KV_STRESS_OBJS = kv_stress.o
@@ -47,7 +47,7 @@ kv_stress: $(KV_STRESS_OBJS) $(KV_STOR_OBJS) $(TEST_DIRECTOR_OBJS)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm $(CPPU_TEST_OBJS) kv_store/*.o test_director/*.o test/*.o *.o kv_harness kv_stress *_unittest
+	rm $(CPPU_TEST_OBJS) $(KV_STOR_OBJS) $(TEST_DIRECTOR_OBJS) test/*.o *.o kv_harness kv_stress *_unittest
 
 test: all
 	./kv_harness delme.kv
