@@ -11,6 +11,9 @@
 #include <assert.h>
 #include <search.h>
 #include <stdio.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "tsearch.h"
+#endif // defined(_WIN32) || defined(_WIN64)
 
 
 struct directory_entry
@@ -80,13 +83,13 @@ int Directory::store_key(uint64_t key, uint32_t block, size_t bytes, uint64_t se
 			*replaced_block = entry->data_block;
 			entry->sequence = sequence;
 			entry->data_block = block;
-			entry->data_bytes = bytes;
+			entry->data_bytes = (uint16_t)bytes;
 			*set_as_current_key_entry = true;
 		}
 		return 0;
 	}
 
-	directory_entry *new_entry = new directory_entry(key, sequence, block, bytes);
+	directory_entry *new_entry = new directory_entry(key, sequence, block, (uint16_t)bytes);
 	*set_as_current_key_entry = true;
 
 	directory_entry **new_node = (directory_entry **)tsearch(new_entry, &_entries_root, dir_entry_compare);

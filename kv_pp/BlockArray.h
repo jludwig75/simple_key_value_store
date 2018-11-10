@@ -25,8 +25,6 @@ public:
 
 	int write_block(uint32_t destination_block, const uint8_t *block_data);
 
-	int truncate();
-
 private:
 	const size_t _raw_block_bytes;
 	int _fd;

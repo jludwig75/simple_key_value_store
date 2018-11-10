@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <string.h>
-
+#include <stdio.h>
 
 
 
@@ -97,8 +97,25 @@ bool test_director__compare_values(struct value *a, struct value *b)
 	return memcmp(a->data, b->data, a->size) == 0;
 }
 
+uint64_t hash_value(const struct value *v)
+{
+	uint64_t chk_sum = 0;
+
+	size_t bytes_processed = 0;
+	while (bytes_processed < v->size)
+	{
+		size_t bytes_to_process = min(sizeof(uint64_t), v->size - bytes_processed);
+		uint64_t t = 0;
+		memcpy(&t, &v->data[bytes_processed], bytes_to_process);
+		chk_sum += t;
+		bytes_processed += bytes_to_process;
+	}
+
+	return chk_sum;
+}
+
 // We want a small range to force overlaps
-const size_t max_unique_keys = 100;
+const size_t max_unique_keys = 5;
 uint64_t test_director__select_key()
 {
 	return rand() % max_unique_keys;
@@ -129,9 +146,12 @@ int test_director__do_set(struct test_director *director)
 
 	test_director__generate_random_value(&value.value);
 
+	//printf("set(%llu, %u, %llu)\n", key.id, value.size, hash_value(&value.value));
+
 	int ret = kv_set(director->stor, &key, &value.value);
 	if (ret != 0 && ret != -ENOSPC)
 	{
+		fprintf(stderr, "kv_set failed.\n");
 		director->number_of_failed_operations++;
 		return 0;
 	}
@@ -146,12 +166,24 @@ int test_director__do_get(struct test_director *director)
 	struct test_value value;
 	value.value.size = sizeof(value.data);
 
+	//printf("get(%llu) -> ", key.id);
+
 	int ret = kv_get(director->stor, &key, &value.value);
 	if (ret != 0 && ret != -ENOENT)
 	{
+		fprintf(stderr, "kv_get failed.\n");
 		director->number_of_failed_operations++;
 		return 0;
 	}
+
+	//if (ret == -ENOENT)
+	//{
+	//	printf("ENOENT\n");
+	//}
+	//else
+	//{
+	//	printf("%u, %llu\n", value.size, hash_value(&value.value));
+	//}
 
 	bool values_match;
 	int checker_ret = kv_checker__check_value(director->checker, &key, &value.value, &values_match);
@@ -163,6 +195,7 @@ int test_director__do_get(struct test_director *director)
 
 	if (ret != checker_ret)
 	{
+		fprintf(stderr, "kv_get failed because of key mismatch.\n");
 		// If it wasn't found in the KV store under test, it shouldn't be found by the checker.
 		// If it was found in the KV store under test, it should be found by the checker.
 		director->number_of_unexpected_missing_keys++;
@@ -172,6 +205,7 @@ int test_director__do_get(struct test_director *director)
 
 	if (ret != -ENOENT && !values_match)
 	{
+		fprintf(stderr, "kv_get failed because of value miscompare for key %llu.\n", key.id);
 		// The value was found, but it does not match.
 		director->number_of_miscompares++;
 		director->number_of_failed_operations++;
@@ -185,9 +219,12 @@ int test_director__do_del(struct test_director *director)
 	struct key key;
 	key.id = test_director__select_key();
 
+	//printf("del(%llu)\n", key.id);
+
 	int ret = kv_del(director->stor, &key);
 	if (ret != 0 && ret != -ENOENT)
 	{
+		fprintf(stderr, "kv_del failed.\n");
 		director->number_of_failed_operations++;
 		return 0;
 	}
@@ -201,6 +238,7 @@ int test_director__do_del(struct test_director *director)
 
 	if (ret != checker_ret)
 	{
+		fprintf(stderr, "kv_del failed because of key mismatch.\n");
 		// If it wasn't found in the KV store under test, it shouldn't be found by the checker.
 		// If it was found in the KV store under test, it should be found by the checker.
 		director->number_of_unexpected_missing_keys++;

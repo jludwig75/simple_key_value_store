@@ -57,6 +57,7 @@ KvStore::~KvStore()
 	delete _block_allocator;
 	delete _block_array;
 	delete _directory;
+	delete _append_point;
 }
 
 int KvStore::open(const char *file_name, bool create)

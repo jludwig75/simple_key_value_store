@@ -1,16 +1,16 @@
 /*
- * BlockArray.cpp
- *
- *  Created on: Nov 5, 2018
- *      Author: jludwig
- */
+* BlockArray.cpp
+*
+*  Created on: Nov 5, 2018
+*      Author: jludwig
+*/
 
 #include "BlockArray.h"
 
 #include <stdio.h>
+#include <io.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <errno.h>
@@ -29,7 +29,7 @@ BlockArray::~BlockArray()
 
 int BlockArray::open(const char *file_name, bool create)
 {
-	_fd = ::open(file_name, O_RDWR | (create ? (O_CREAT | O_TRUNC) : 0), S_IRWXU);
+	_fd = _open(file_name, O_RDWR | O_BINARY | (create ? (O_CREAT | O_TRUNC) : 0), _S_IREAD | _S_IWRITE);
 	if (_fd == -1)
 	{
 		return errno;
@@ -73,12 +73,12 @@ int BlockArray::read_block(uint32_t block, uint8_t *block_data) const
 		return -EBADF;
 	}
 
-	if (lseek(_fd, block * _raw_block_bytes, SEEK_SET) == -1)
+	if (lseek(_fd, (long)(block * _raw_block_bytes), SEEK_SET) == -1)
 	{
 		return errno;
 	}
 
-	int ret = read(_fd, block_data, _raw_block_bytes);
+	int ret = read(_fd, block_data, (unsigned)_raw_block_bytes);
 	if (ret == -1)
 	{
 		return errno;
@@ -98,12 +98,12 @@ int BlockArray::write_block(uint32_t destination_block, const uint8_t *block_dat
 		return -EBADF;
 	}
 
-	if (lseek(_fd, destination_block * _raw_block_bytes, SEEK_SET) == -1)
+	if (lseek(_fd, (long)(destination_block * _raw_block_bytes), SEEK_SET) == -1)
 	{
 		return errno;
 	}
 
-	int ret = write(_fd, block_data, _raw_block_bytes);
+	int ret = write(_fd, block_data, (unsigned)_raw_block_bytes);
 	if (ret == -1)
 	{
 		return errno;
@@ -111,21 +111,6 @@ int BlockArray::write_block(uint32_t destination_block, const uint8_t *block_dat
 	if ((size_t)ret != _raw_block_bytes)
 	{
 		return -EIO;
-	}
-
-	return 0;
-}
-
-int BlockArray::truncate()
-{
-	if (_fd == -1)
-	{
-		return -EBADF;
-	}
-
-	if (ftruncate(_fd, 0) != 0)
-	{
-		return errno;
 	}
 
 	return 0;

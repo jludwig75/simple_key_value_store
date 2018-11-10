@@ -1,9 +1,13 @@
 #include "kv_checker.h"
 
-#include <search.h>
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <search.h>
+#include <stdio.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "tsearch.h"
+#endif // defined(_WIN32) || defined(_WIN64)
 
 
 struct kv_checker
@@ -75,6 +79,8 @@ void kv_checker__cleanup(struct kv_checker **checker)
 	*checker = NULL;
 }
 
+uint64_t hash_value(const struct value *v);
+
 int kv_checker__store_value(struct kv_checker *checker, const struct key *k, const struct value *v)
 {
 	struct kv_node *search_node = (struct kv_node *)malloc(sizeof(struct kv_node));
@@ -92,6 +98,8 @@ int kv_checker__store_value(struct kv_checker *checker, const struct key *k, con
 		return -ENOMEM;
 	}
 
+	//printf("store_value(%llu) -> %u, %llu\n", k->id, v->size, hash_value(v));
+
 	struct kv_node **entry = (struct kv_node **)tsearch(search_node, &checker->value_root, kv_node__compare);
 	if (!entry)
 	{
@@ -101,6 +109,7 @@ int kv_checker__store_value(struct kv_checker *checker, const struct key *k, con
 
 	if (search_node != *entry)
 	{
+		//printf("kv_checker replacing value for key %llu\n", k->id);
 		free(search_node);
 		assert((*entry)->value != NULL);
 		free((*entry)->value);
@@ -116,6 +125,7 @@ int kv_checker__store_value(struct kv_checker *checker, const struct key *k, con
 	return 0;
 }
 
+
 int kv_checker__check_value(const struct kv_checker *checker, const struct key *k, const struct value *v, bool *values_match)
 {
 	struct kv_node search_key;
@@ -124,12 +134,15 @@ int kv_checker__check_value(const struct kv_checker *checker, const struct key *
 	struct kv_node **entry = (struct kv_node **)tfind(&search_key, &checker->value_root, kv_node__compare);
 	if (!entry)
 	{
+		//printf("check_value(%llu) -> ENOENT\n", k->id);
 		*values_match = false;
 		return -ENOENT;
 	}
 
 	const struct value *stored_value = (*entry)->value;
 	assert(stored_value != NULL);
+
+	//printf("check_value(%llu) -> %u, %llu\n", k->id, stored_value->size, hash_value(stored_value));
 
 	*values_match = (stored_value->size == v->size && memcmp(stored_value->data, v->data, v->size) == 0);
 	if (!*values_match)

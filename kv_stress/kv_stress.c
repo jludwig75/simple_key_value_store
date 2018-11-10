@@ -28,14 +28,14 @@ int main(int argc, char **argv)
 		return ret;
 	}
 
-	ret = test_director__run_stress(director, 1000000);
+	ret = test_director__run_stress(director, 100000);
 	if (ret != 0)
 	{
 		fprintf(stderr, "Failed to run test suite: %d.\n", ret);
 		return ret;
 	}
 
-	printf("Ran %lu tests with %lu failures\n", test_director__get_number_of_operations_run(director), test_director__get_number_of_failed_operations(director));
+	printf("Ran %lu operations with %lu failures\n", test_director__get_number_of_operations_run(director), test_director__get_number_of_failed_operations(director));
 
 	test_director__cleanup(&director);
 	kv_checker__cleanup(&checker);
