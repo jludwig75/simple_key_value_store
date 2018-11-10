@@ -184,9 +184,9 @@ int kv_del(struct kvstor *store, const struct key *k)
         return ret;
     }
 
-    struct kv_block *block_data = (struct kv_block *)malloc(sizeof(struct kv_block));
-    kv_block__init(block_data, k->id, 0, NULL, store->current_sequence_number++);
-    /// @todo DeleteOnExit<kv_block> on_exit(block_data);
+	/// @todo Allocate on heap rather than stack
+	struct kv_block block_data;
+    kv_block__init(&block_data, k->id, 0, NULL, store->current_sequence_number++);
 
     uint32_t destination_block = kv_append_point__get_append_point(store->append_point);
     if (destination_block == UINT32_MAX)
@@ -194,7 +194,7 @@ int kv_del(struct kvstor *store, const struct key *k)
         return -ENOSPC;
     }
 
-    ret = kv_block_array__write_block(store->block_array, destination_block, (const uint8_t *)block_data);
+    ret = kv_block_array__write_block(store->block_array, destination_block, (const uint8_t *)&block_data);
     if (ret != 0)
     {
         return ret;
