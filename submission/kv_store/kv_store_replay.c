@@ -5,8 +5,6 @@
 
 int kv_store__replay_log(struct kvstor *store)
 {
-	store->last_scanned_sequence_number = 0;
-
 	uint32_t total_blocks;
 	int ret = kv_block_array__get_file_block_count(store->block_array, &total_blocks);
 	if (ret != 0)
@@ -46,6 +44,13 @@ int kv_store__replay_log(struct kvstor *store)
 			}
 
 			kv_append_point__update_append_point(store->append_point, b, block.header.sequence);
+
+			// Replay the sequence number as well.
+			if (block.header.sequence >= store->current_sequence_number)
+			{
+				// Keep the sequence number one ahead of the highest sequence seen.
+				store->current_sequence_number = block.header.sequence + 1;
+			}
 		}
 	}
 

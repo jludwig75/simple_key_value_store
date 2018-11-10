@@ -24,11 +24,9 @@ static int kv_store__init(struct kvstor **store)
         return -ENOMEM;
     }
 
-    (*store)->current_append_point = 0;
     (*store)->current_sequence_number = 0;
-    (*store)->last_scanned_sequence_number = 0;
 
-    int ret = kv_block_allocator__init(&(*store)->block_allocator, MAXKEYS + 1);
+    int ret = kv_block_allocator__init(&(*store)->block_allocator, 2 * MAXKEYS + 1);
     if (ret != 0)
     {
         free(*store);

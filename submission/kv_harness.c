@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <inttypes.h>
 
 /* simple standalone test framework */
 static unsigned int testnum;
@@ -299,6 +300,8 @@ int kv_store_retrieves_latest_persisted_keys_after_overwrites(int argc, char **a
         return ret;
     }
 
+	const size_t expected_last_version = versions_to_write - 1;
+
     for (i = 0; i < keys_to_store; i++)
     {
         struct key k;
@@ -314,9 +317,9 @@ int kv_store_retrieves_latest_persisted_keys_after_overwrites(int argc, char **a
             return ret;
         }
 
-        if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != versions_to_write - 1)
+        if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != expected_last_version)
         {
-            fprintf(stderr, "Found KV mismatch\n");
+			fprintf(stderr, "Found KV mismatch %"PRIu64" exepcted %"PRIu64" retrieved\n", expected_last_version, retrieved_value.data.version);
             return -1;
         }
     }
@@ -374,7 +377,9 @@ int kv_store_retrieves_latest_persisted_keys_after_deletes(int argc, char **argv
         return ret;
     }
 
-    for (i = 0; i < keys_to_store; i++)
+	const size_t expected_last_version = versions_to_write - 1;
+
+	for (i = 0; i < keys_to_store; i++)
     {
         struct key k;
         k.id = 0x1000000 | i;
@@ -389,16 +394,142 @@ int kv_store_retrieves_latest_persisted_keys_after_deletes(int argc, char **argv
             return ret;
         }
 
-        if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != versions_to_write - 1)
+        if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != expected_last_version)
         {
-            fprintf(stderr, "Found KV mismatch\n");
-            return -1;
+			fprintf(stderr, "Found KV mismatch %"PRIu64" exepcted %"PRIu64" retrieved\n", expected_last_version, retrieved_value.data.version);
+			return -1;
         }
     }
 
     kv_close(stor);
 
     return 0;
+}
+
+int kv_store_retrieves_latest_persisted_keys_twice(int argc, char **argv)
+{
+	struct kvstor *stor;
+
+	int ret = kv_open(&stor, true, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	const size_t keys_to_store = 100;
+	const size_t versions_to_write = 100;
+	size_t i;
+	uint32_t v;
+
+	for (v = 0; v < versions_to_write; v++)
+	{
+		for (i = 0; i < keys_to_store; i++)
+		{
+			struct key k;
+			k.id = i;
+
+			struct test_value_data_buffer data_to_store;
+			data_to_store.size = sizeof(data_to_store.data);
+			data_to_store.data.key = k.id;
+			data_to_store.data.version = v;
+
+			ret = kv_set(stor, &k, (struct value*)&data_to_store);
+			if (ret != 0)
+			{
+				return ret;
+			}
+		}
+	}
+
+	kv_close(stor);
+
+	ret = kv_open(&stor, false, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	size_t expected_last_version = versions_to_write - 1;
+
+	for (i = 0; i < keys_to_store; i++)
+	{
+		struct key k;
+		k.id = i;
+
+
+		struct test_value_data_buffer retrieved_value;
+
+		int ret = kv_get(stor, &k, (struct value*)&retrieved_value);
+		if (ret != 0)
+		{
+			fprintf(stderr, "Could not retrieve value for key\n");
+			return ret;
+		}
+
+		if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != expected_last_version)
+		{
+			fprintf(stderr, "Found KV mismatch %"PRIu64" exepcted %"PRIu64" retrieved\n", expected_last_version, retrieved_value.data.version);
+			return -1;
+		}
+	}
+
+	const size_t new_version_start = 10000;
+
+	for (v = new_version_start; v < new_version_start + versions_to_write; v++)
+	{
+		for (i = 0; i < keys_to_store; i++)
+		{
+			struct key k;
+			k.id = i;
+
+			struct test_value_data_buffer data_to_store;
+			data_to_store.size = sizeof(data_to_store.data);
+			data_to_store.data.key = k.id;
+			data_to_store.data.version = v;
+
+			ret = kv_set(stor, &k, (struct value*)&data_to_store);
+			if (ret != 0)
+			{
+				return ret;
+			}
+		}
+	}
+
+	kv_close(stor);
+
+
+	ret = kv_open(&stor, false, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	expected_last_version = new_version_start + versions_to_write - 1;
+
+	for (i = 0; i < keys_to_store; i++)
+	{
+		struct key k;
+		k.id = i;
+
+
+		struct test_value_data_buffer retrieved_value;
+
+		int ret = kv_get(stor, &k, (struct value*)&retrieved_value);
+		if (ret != 0)
+		{
+			fprintf(stderr, "Could not retrieve value for key\n");
+			return ret;
+		}
+
+		if (retrieved_value.size != sizeof(struct test_value_data) || retrieved_value.data.key != k.id || retrieved_value.data.version != expected_last_version)
+		{
+			fprintf(stderr, "Found KV mismatch %"PRIu64" exepcted %"PRIu64" retrieved\n", expected_last_version, retrieved_value.data.version);
+			return -1;
+		}
+	}
+
+	kv_close(stor);
+	return 0;
 }
 
 int
@@ -438,6 +569,8 @@ main(int argc, char **argv)
     test(kv_store_retrieves_latest_persisted_keys_after_overwrites(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_after_overwrites");
 
     test(kv_store_retrieves_latest_persisted_keys_after_deletes(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_after_deletes");
+
+	test(kv_store_retrieves_latest_persisted_keys_twice(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_twice");
 
     printf("%u failed out of %u run\n", testfail, testnum);
     return 0;

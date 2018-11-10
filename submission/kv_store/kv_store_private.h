@@ -15,7 +15,5 @@ struct kvstor
 	struct kv_block_allocator *block_allocator;
 	struct kv_append_point *append_point;
 
-	uint32_t current_append_point;
 	uint64_t current_sequence_number;
-	uint64_t last_scanned_sequence_number;
 };
