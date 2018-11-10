@@ -108,6 +108,10 @@ int kv_directory__store_key(struct kv_directory *directory, uint64_t key, uint32
         assert(sequence != entry->sequence);
         if (sequence > entry->sequence)
         {
+			//if (entry->data_bytes == 0)
+			//{
+			//	printf("2");
+			//}
             *replaced_block = entry->data_block;
             entry->sequence = sequence;
             entry->data_block = block;
@@ -138,7 +142,7 @@ int kv_directory__store_key(struct kv_directory *directory, uint64_t key, uint32
 int kv_directory__lookup_key(struct kv_directory *directory, uint64_t key, uint32_t *block, size_t *bytes)
 {
     struct directory_entry *entry = kv_directory__find_entry_for_key(directory, key);
-    if (!entry || !directory_entry__is_allocated(entry))
+    if (!entry)
     {
         return -ENOENT;
     }

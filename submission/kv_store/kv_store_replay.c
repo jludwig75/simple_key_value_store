@@ -38,7 +38,7 @@ int kv_store__replay_log(struct kvstor *store)
 				kv_block_allocator__free_block(store->block_allocator, replaced_block);
 			}
 
-			if (set_as_latest_entry_for_key && kv_block__is_allocated(&block))
+			if (set_as_latest_entry_for_key)
 			{
 				kv_block_allocator__mark_block_as_allocated(store->block_allocator, b);
 			}

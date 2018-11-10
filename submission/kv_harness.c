@@ -532,6 +532,64 @@ int kv_store_retrieves_latest_persisted_keys_twice(int argc, char **argv)
 	return 0;
 }
 
+int kv_store_cannot_get_deleted_values_after_replay(int argc, char **argv)
+{
+	struct key k;
+	k.id = 43;
+
+	struct kvstor *stor;
+
+	int ret = kv_open(&stor, true, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	struct test_value_data_buffer data_to_store;
+	data_to_store.size = sizeof(data_to_store.data);
+	data_to_store.data.key = k.id;
+	data_to_store.data.version = 197;
+
+	ret = kv_set(stor, &k, (struct value*)&data_to_store);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	ret = kv_del(stor, &k);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	kv_close(stor);
+
+
+	ret = kv_open(&stor, false, argc, argv);
+	if (ret != 0)
+	{
+		return ret;
+	}
+
+	struct test_value_data_buffer retrieved_value;
+
+	ret = kv_get(stor, &k, (struct value*)&retrieved_value);
+	if (ret != 0 && ret != -ENOENT)
+	{
+		fprintf(stderr, "Unexpected error trying to retrieve value for key\n");
+		return ret;
+	}
+	if (ret == 0)
+	{
+		fprintf(stderr, "Deleted key was found.\n");
+		return -1;
+	}
+
+	kv_close(stor);
+
+	return 0;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -571,6 +629,8 @@ main(int argc, char **argv)
     test(kv_store_retrieves_latest_persisted_keys_after_deletes(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_after_deletes");
 
 	test(kv_store_retrieves_latest_persisted_keys_twice(argc, argv) == 0, "kv_store_retrieves_latest_persisted_keys_twice");
+
+	test(kv_store_cannot_get_deleted_values_after_replay(argc, argv) == 0, "kv_store_cannot_get_deleted_values_after_replay");
 
     printf("%u failed out of %u run\n", testfail, testnum);
     return 0;
