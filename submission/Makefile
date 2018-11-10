@@ -1,8 +1,9 @@
 CC=gcc
 CXX=g++
-CFLAGS=-D_GNU_SOURCE -I./kv_store -I./test_director
+CFLAGS=-D_GNU_SOURCE -I./kv_store -I./test_director -Wno-write-strings
 
-KV_STOR_OBJS = kv_store/kv_store.o kv_store/kv_append_point.o kv_store/kv_block_allocator.o kv_store/kv_block_array.o kv_store/kv_directory.o kv_store/kv_block.o
+#KV_STOR_OBJS = kv_store/kv_store.o kv_store/kv_append_point.o kv_store/kv_block_allocator.o kv_store/kv_block_array.o kv_store/kv_directory.o kv_store/kv_block.o
+KV_STOR_OBJS = $(patsubst %.cpp,%.o,$(wildcard kv_store/*.c))
 TEST_DIRECTOR_OBJS = test_director/test_director.o test_director/kv_checker.o
 
 KV_HARNESS_OBJS = kv_harness.o
@@ -36,7 +37,7 @@ kv_directory_unittest: libcpputest.a test/kv_directory_unittest.o kv_store/kv_di
 	$(CXX) -o $@ $^ $(CFLAGS) -L. -lcpputest
 	./kv_directory_unittest
 
-kv_store_unittest: libcpputest.a test/kv_store_unittest.o kv_store/kv_store.o test/kv_block_allocator_mock.o test/kv_append_point_mock.o test/kv_directory_mock.o test/kv_block_mock.o test/kv_block_array_mock.o
+kv_store_unittest: libcpputest.a test/kv_store_unittest.o kv_store/kv_store.o test/kv_block_allocator_mock.o test/kv_append_point_mock.o test/kv_directory_mock.o test/kv_block_mock.o test/kv_block_array_mock.o test/kv_store_replay_mock.o
 	$(CXX) -o $@ $^ $(CFLAGS) -L. -lcpputest
 	./kv_store_unittest
 

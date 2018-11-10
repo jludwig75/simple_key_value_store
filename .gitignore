@@ -2,3 +2,7 @@
 *Debug/
 *Release/
 *.kv
+*.a
+*.o
+*.vcxproj.user
+.vs/

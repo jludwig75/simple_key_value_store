@@ -6,29 +6,15 @@
  */
 #include "kv_store.h"
 
-#include "kv_block_allocator.h"
-#include "kv_block_array.h"
-#include "kv_directory.h"
-#include "kv_append_point.h"
-
 #include "kv_block.h"
+
+#include "kv_store_private.h"
+#include "kv_store_replay.h"
 
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
 
-
-struct kvstor
-{
-    struct kv_block_array *block_array;
-    struct kv_directory *directory;
-    struct kv_block_allocator *block_allocator;
-    struct kv_append_point *append_point;
-
-    uint32_t current_append_point;
-    uint64_t current_sequence_number;
-    uint64_t last_scanned_sequence_number;
-};
 
 static int kv_store__init(struct kvstor **store)
 {
@@ -73,55 +59,6 @@ static int kv_store__init(struct kvstor **store)
     return 0;
 }
 
-int kv_store__scan(struct kvstor *store)
-{
-    store->last_scanned_sequence_number = 0;
-
-    uint32_t total_blocks;
-    int ret = kv_block_array__get_file_block_count(store->block_array, &total_blocks);
-    if (ret != 0)
-    {
-        return ret;
-    }
-
-    struct kv_block block;
-    kv_block__init_empty(&block);
-    uint32_t b;
-    for (b = 0; b < total_blocks; b++)
-    {
-        ret = kv_block_array__read_block(store->block_array, b, (uint8_t *)&block);
-        if (ret != 0)
-        {
-            return ret;
-        }
-
-        if (kv_block__validate(&block))
-        {
-            bool set_as_latest_entry_for_key;
-            uint32_t replaced_block;
-            ret = kv_directory__store_key(store->directory, block.header.key_id, b, block.header.data_bytes, block.header.sequence, &set_as_latest_entry_for_key, &replaced_block);
-            if (ret != 0)
-            {
-                return ret;
-            }
-
-            if (replaced_block != UINT32_MAX)
-            {
-                kv_block_allocator__free_block(store->block_allocator, replaced_block);
-            }
-
-            if (set_as_latest_entry_for_key && kv_block__is_allocated(&block))
-            {
-                kv_block_allocator__mark_block_as_allocated(store->block_allocator, b);
-            }
-
-            kv_append_point__update_append_point(store->append_point, b, block.header.sequence);
-        }
-    }
-
-    return 0;
-}
-
 int kv_open(struct kvstor **store, bool create, int argc, char **argv)
 {
     if (argc < 2)
@@ -143,7 +80,7 @@ int kv_open(struct kvstor **store, bool create, int argc, char **argv)
 
     if (!create)
     {
-        return kv_store__scan(*store);
+        return kv_store__replay_log(*store);
     }
 
     return 0;
