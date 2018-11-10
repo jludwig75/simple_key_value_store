@@ -22,7 +22,11 @@ libcpputest.a: $(CPPU_TEST_OBJS)
 	ar r $@ $^
 	ranlib $@
 
-unittests: kv_block_allocator_unittest kv_directory_unittest
+unittests: kv_block_allocator_unittest kv_directory_unittest kv_append_point_unittest
+
+kv_append_point_unittest: libcpputest.a test/kv_append_point_unittest.o kv_store/kv_append_point.o test/kv_block_allocator_mock.o 
+	$(CXX) -o $@ $^ $(CFLAGS) -L. -lcpputest
+	./kv_append_point_unittest
 
 kv_block_allocator_unittest: libcpputest.a test/kv_block_allocator_unittest.o kv_store/kv_block_allocator.o
 	$(CXX) -o $@ $^ $(CFLAGS) -L. -lcpputest
@@ -39,9 +43,9 @@ kv_stress: $(KV_STRESS_OBJS) $(KV_STOR_OBJS) $(TEST_DIRECTOR_OBJS)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm kv_store/*.o test_director/*.o *.o kv_harness kv_stress kv_block_allocator_unittest kv_directory_unittest
+	rm kv_store/*.o test_director/*.o *.o kv_harness kv_stress *_unittest
 
-test: all
+test: all unittests
 	./kv_harness delme.kv
 	rm delme.kv
 	./kv_stress delme.kv
