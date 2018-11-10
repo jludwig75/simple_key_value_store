@@ -59,7 +59,7 @@ typedef long unsigned int size_t;
 
 typedef char* va_list;
 #define NULL (0)
-extern void*	malloc(size_t);
+extern void*    malloc(size_t);
 extern void     free(void *);
 
 #define _bnd(X, bnd)            (((sizeof (X)) + (bnd)) & (~(bnd)))

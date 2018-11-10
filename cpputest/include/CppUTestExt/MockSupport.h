@@ -91,7 +91,7 @@ public:
     /*
      * The following functions are recursively through the lower MockSupports scopes
      * This means, if you do mock().disable() it will disable *all* mocking scopes, including mock("myScope").
-  	 */
+       */
 
     virtual void disable();
     virtual void enable();

@@ -14,7 +14,6 @@ struct kv_directory;
 
 
 int kv_directory__init(struct kv_directory **directory);
-
 void kv_directory__cleanup(struct kv_directory **directory);
 
 int kv_directory__store_key(struct kv_directory *directory, uint64_t key, uint32_t block, size_t bytes, uint64_t sequence, bool *set_as_current_key_entry, uint32_t *replaced_block);

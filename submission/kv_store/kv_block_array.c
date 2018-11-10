@@ -36,6 +36,15 @@ int kv_block_array__init(struct kv_block_array **block_array, size_t raw_block_b
     return 0;
 }
 
+static void kv_block_array__close(struct kv_block_array *block_array)
+{
+    if (block_array->fd != -1)
+    {
+        close(block_array->fd);
+        block_array->fd = -1;
+    }
+}
+
 void kv_block_array__cleanup(struct kv_block_array **block_array)
 {
     kv_block_array__close(*block_array);
@@ -51,15 +60,6 @@ int kv_block_array__open(struct kv_block_array *block_array, const char *file_na
         return errno;
     }
     return 0;
-}
-
-void kv_block_array__close(struct kv_block_array *block_array)
-{
-    if (block_array->fd != -1)
-    {
-        close(block_array->fd);
-        block_array->fd = -1;
-    }
 }
 
 

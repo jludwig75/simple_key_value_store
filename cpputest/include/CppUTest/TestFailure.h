@@ -168,13 +168,13 @@ public:
 class BinaryEqualFailure : public TestFailure
 {
 public:
-	BinaryEqualFailure(UtestShell* test, const char* fileName, int lineNumber, const unsigned char* expected, const unsigned char* actual, size_t size, const SimpleString& text);
+    BinaryEqualFailure(UtestShell* test, const char* fileName, int lineNumber, const unsigned char* expected, const unsigned char* actual, size_t size, const SimpleString& text);
 };
 
 class BitsEqualFailure : public TestFailure
 {
 public:
-	BitsEqualFailure(UtestShell* test, const char* fileName, int lineNumber, unsigned long expected, unsigned long actual, unsigned long mask, size_t byteCount, const SimpleString& text);
+    BitsEqualFailure(UtestShell* test, const char* fileName, int lineNumber, unsigned long expected, unsigned long actual, unsigned long mask, size_t byteCount, const SimpleString& text);
 };
 
 class FeatureUnsupportedFailure : public TestFailure

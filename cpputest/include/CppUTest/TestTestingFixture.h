@@ -125,7 +125,7 @@ public:
 
     int getRunCount()
     {
-    	return result_->getRunCount();
+        return result_->getRunCount();
     }
 
     void checkTestFailsWithProperTestLocation(const char* text, const char* file, int line);
