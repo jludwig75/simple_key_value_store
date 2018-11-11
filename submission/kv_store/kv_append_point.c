@@ -46,15 +46,21 @@ uint32_t kv_append_point__get_append_point(struct kv_append_point *append_point)
         // If we ran out of space before, start back at 0.
         append_point->current_append_point = 0;
     }
+
+    // Start from the last append point used (or seen at replay) and find the next free block.
     append_point->current_append_point = kv_block_allocator__find_next_free_block(append_point->block_allocator, append_point->current_append_point);
     return append_point->current_append_point;
 }
 
 void kv_append_point__update_append_point(struct kv_append_point *append_point, uint32_t block, uint64_t sequence)
 {
+    // See if this sequence was higher than the last seen.
     if (sequence >= append_point->last_scanned_sequence_number)    // >= to handle only block 0 written.
     {
+        // This sequence is higher. Use this block as the append point.
+        // The call to get_append_point will take care of advancing it past this block.
         append_point->current_append_point = block;
+        // Keep track of this sequence until we find a higher one.
         append_point->last_scanned_sequence_number = sequence;
     }
 }

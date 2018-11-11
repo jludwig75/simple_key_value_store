@@ -85,6 +85,7 @@ uint32_t kv_block_allocator__find_next_free_block(const struct kv_block_allocato
         starting_block = 0;
     }
 
+    // Scan from starting block to the end of the bitmap.
     for (uint32_t b = starting_block; b < block_allocator->number_of_blocks; b++)
     {
         if (!kv_block_allocator__is_set(block_allocator, b))
@@ -92,8 +93,13 @@ uint32_t kv_block_allocator__find_next_free_block(const struct kv_block_allocato
             return b;
         }
     }
+
+    // We didn't find a starting block at the end of the bitmap
     if (starting_block > 0)
     {
+        // If we didn't already start at block 0,
+        // Start at the beginning of the log and scan
+        // up to starting_block, non-inclusive.
         for (uint32_t b = 0; b < starting_block; b++)
         {
             if (!kv_block_allocator__is_set(block_allocator, b))

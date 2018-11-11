@@ -37,6 +37,9 @@ bool directory_entry__is_allocated(const struct directory_entry *entry)
 
 struct kv_directory
 {
+    // The root of the directory entry tree
+    // directory uses the Linux balanced search
+    // tree in search.h
     void *entries_root;
 };
 
@@ -104,23 +107,28 @@ int kv_directory__store_key(struct kv_directory *directory, uint64_t key, uint32
     struct directory_entry *entry = kv_directory__find_entry_for_key(directory, key);
     if (entry)
     {
-        // This should never happen.
+        // The key is already stored in the directory.
+        // We don't need to add it.
+
+        // This should never happen. A sequence number should never be used more than once.
         assert(sequence != entry->sequence);
+        
+        // Only update the stored key if the new sequence
+        // is greater than the sequence of the version stored.
         if (sequence > entry->sequence)
         {
-            //if (entry->data_bytes == 0)
-            //{
-            //    printf("2");
-            //}
+            // Replace the key.
             *replaced_block = entry->data_block;
             entry->sequence = sequence;
             entry->data_block = block;
             entry->data_bytes = (uint16_t)bytes;
             *set_as_current_key_entry = true;
         }
+        // Drop out now.
         return 0;
     }
 
+    // The key is not yet stored. Add it now.
     struct directory_entry *new_entry = (struct directory_entry *)malloc(sizeof(struct directory_entry));
     directory_entry__init(new_entry, key, sequence, block, (uint16_t)bytes);
     *set_as_current_key_entry = true;
