@@ -26,6 +26,9 @@ static int kv_store__init(struct kvstor **store)
 
     (*store)->current_sequence_number = 0;
 
+    /// @todo Limit the file size to 2 * MAXKEYS + 1. This will allow enough room
+    ///         for keys to be deleted. It would be best to allow the caller to
+    ///         set this size to some much larger value in the future.
     int ret = kv_block_allocator__init(&(*store)->block_allocator, 2 * MAXKEYS + 1);
     if (ret != 0)
     {
